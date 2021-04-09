@@ -10,4 +10,8 @@ export const routes = [
     name: 'about',
     component: () => {return import('@/pages/About.vue')}
   },
+  {
+    path: '*',
+    redirect: '/todolist'
+  }
 ]

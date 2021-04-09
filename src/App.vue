@@ -3,9 +3,9 @@
     <transition :name="transitionName">
       <router-view class="router-view"></router-view>
     </transition>
-    <div class="router-box">
+    <!-- <div class="router-box">
       <van-button type="primary" size="mini" v-for="item in routerList" :key="item.name" @click="goRouter(item)">{{item.name}}</van-button>
-    </div>
+    </div> -->
   </div>
 </template>
 
