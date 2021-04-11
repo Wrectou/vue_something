@@ -1,6 +1,7 @@
 import axios from 'axios'
 import { Toast } from 'vant'
 
+// axios实例
 const request = axios.create({
   baseURL: 'https://todo-add9b-default-rtdb.firebaseio.com',
   // baseURL: 'https://t9b-default-rtdb.firebaseio.com',
@@ -8,8 +9,10 @@ const request = axios.create({
   timeout: 10 * 1000,
 })
 
+// 三秒钟后有如果还没获得返回值网络请求提示
 let timer
 
+// 请求拦截
 request.interceptors.request.use(function (config) {
   timer = setTimeout(() => { Toast.loading({message: '',duration: 15000}) }, 3000)
   return config;
@@ -17,6 +20,7 @@ request.interceptors.request.use(function (config) {
   return Promise.reject(error);
 });
 
+// 响应拦截
 request.interceptors.response.use(function (response) {
   Toast.clear()
   clearTimeout(timer)

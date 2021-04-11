@@ -4,32 +4,31 @@
 
     <div class="todo-list">
       <van-skeleton :loading="isLoading" :row="6" />
-      <van-swipe-cell v-for="(todo, i) in resetTodosArr" :key="todo.id" :before-close="beforeClose">
-        <van-cell :class="[todo.done ? 'done-todo' : '']" :border="false" :value="formatTime(Number(todo.time))" >
-        <!-- <van-cell :class="[todo.done ? 'done-todo' : '']" :border="false" :value="formatTime(Number(todo.time))" @click="handleDone(todo, i)"> -->
+      <van-swipe-cell v-for="(todo, i) in resetTodosArr" :name="JSON.stringify(todo)" :key="todo.id" :before-close="beforeClose">
+        <van-cell :class="[todo.done ? 'done-todo' : '']" :border="false" :value="TimeUtil.formatTime(Number(todo.time))" >
           <template #title>
-            <van-checkbox v-model="todo.done" icon-size="16px" @click="checkTodo">{{todo.todo}}</van-checkbox> 
-            <!-- <van-checkbox v-model="todo.done" ref="checkboxs" icon-size="16px">{{todo.todo}}</van-checkbox>  -->
+            <van-checkbox v-model="todo.done" icon-size="16px" @click="checkTodo(todo)">{{todo.todo}}</van-checkbox> 
           </template>
         </van-cell>
         <template #right>
           <van-button square type="danger" text="删除" />
         </template>
       </van-swipe-cell>
-      <van-empty v-if="todos.length<1 && !isLoading" description="No-Todos" />
+      <van-empty v-if="activeTabbar === 0 && todayTodos.length<1 && !isLoading || activeTabbar === 1 && todos.length<1 && !isLoading" description="No-Todo" />
     </div>
 
-    <van-tabbar v-model="activeTabbar" @change="tabbarChange">
+    <van-tabbar v-model="activeTabbar">
       <van-tabbar-item icon="todo-list-o" :badge="todayNoDone.length > 0 ? todayNoDone.length : ''">Today</van-tabbar-item>
-      <van-tabbar-item icon="orders-o" dot>All</van-tabbar-item>
+      <van-tabbar-item icon="orders-o" :dot="allNoDone.length > 0">All</van-tabbar-item>
     </van-tabbar>
+
   </div>
 </template>
 
 <script>
-import { getTodoList } from '@/api'
-import { Tabbar, TabbarItem,   SwipeCell, Cell, Button, Dialog, Checkbox, Empty, Skeleton } from 'vant'
-import { formatTime } from '@/utils'
+import { getTodoList, editTodo, deleteTodo } from '@/api'
+import { Tabbar, TabbarItem,   SwipeCell, Cell, Button, Dialog, Checkbox, Empty, Skeleton, Toast } from 'vant'
+import { TimeUtil } from '@/utils'
 
 export default {
   name: 'todo-list',
@@ -46,60 +45,79 @@ export default {
   },
   data() {
     return {
-      formatTime: formatTime,
+      TimeUtil: new TimeUtil(),
       isLoading: true,
       activeTabbar: 0,
       checked: false,
       todos: [],
+      todayTodos: [],
     }
   },
   created() {
     this.getData()
-    setTimeout(() => {
-      this.getData()
-    }, 2000)
   },
   computed: {
+    // tabbar Today 是否显示未完成条数
     todayNoDone() {
+      return this.todayTodos.filter(item => !item.done)
+    },
+    // tabbar All 是否显示红点
+    allNoDone() {
       return this.todos.filter(item => !item.done)
     },
+    // 根据activeTabbar 排序 todos 完成的按照完成时间从前往后排序，未完成的按照设定时间从前往后排序
     resetTodosArr() {
-      let doneArr = [],
-          nowArr = [];
-      this.todos.forEach((item) => {
+      let keyText = ''
+      if (this.activeTabbar === 0) keyText = 'todayTodos'
+      else if (this.activeTabbar === 1) keyText = 'todos'
+      let doneArr = [], nowArr = []
+      this[keyText].forEach((item) => {
         if (!item.done) nowArr = [item, ...nowArr]
         else doneArr = [...doneArr, item]
       })
-      nowArr.sort((a, b) => a.id - b.id)
+      nowArr.sort((a, b) => a.time - b.time)
       doneArr.sort((a, b) => a.donetime - b.donetime)
       return [...nowArr, ...doneArr]
     }
   },
   methods: {
+    // 获取todos
     getData() {
       getTodoList().then(res => {
         const {data} = res
         this.isLoading = false
-        // Object.values()方法返回一个给定对象自身的所有可枚举属性值的数组，值的顺序与使用for...in循环的顺序相同 ( 区别在于 for-in 循环枚举原型链中的属性 )。
-        this.todos = Object.values(data)
-        // Object.entries()方法返回一个给定对象自身可枚举属性的键值对数组，其排列与使用 for...in 循环遍历该对象时返回的顺序一致（区别在于 for-in 循环还会枚举原型链中的属性）。
-        // let todos = []
-        // for (const [key, value] of Object.entries(data)) {
-        //   todos.push(value)
-        // }
+        if (data) {
+          // Object.entries()方法返回一个给定对象自身可枚举属性的键值对数组，其排列与使用 for...in 循环遍历该对象时返回的顺序一致（区别在于 for-in 循环还会枚举原型链中的属性）。
+          let todos = []
+          for (const [key, value] of Object.entries(data)) {
+            todos.push({...value, dataBaseId: key})
+          }
+          this.todos = todos
+          this.todayTodos = this.todos.filter((item) => this.TimeUtil.isToday(item.time))
+          // Object.values()方法返回一个给定对象自身的所有可枚举属性值的数组，值的顺序与使用for...in循环的顺序相同 ( 区别在于 for-in 循环枚举原型链中的属性 )。
+          // this.todos = Object.values(data)
+        } else {
+          this.todos = []
+          this.todayTodos = []
+        }
       },() => this.isLoading = false)
     },
-    tabbarChange(i) {
-      console.log(i);
+    // 改变todo状态
+    checkTodo(item) {
+      let params
+      if (item.done) params = {...item, donetime: new Date().getTime()}
+      else params = {...item, donetime: ''}
+      editTodo(params)
+        .then(res => {
+          this.getData()
+        }, err => {
+          Toast('状态修改失败！')
+          this.getData()
+        })
     },
-    // handleDone(item, i) {
-    //   this.$refs.checkboxs[i].toggle()
-    // },
-    checkTodo(e) {
-      console.log(e);
-      console.log(e.target.ariaChecked);
-    },
-    beforeClose({ position, instance }) {
+    // 删除todo
+    beforeClose({ name, position, instance }) {
+      let self = this
       switch (position) {
         case 'left':
         case 'cell':
@@ -107,13 +125,22 @@ export default {
           instance.close();
           break;
         case 'right':
-          Dialog.confirm({message: '确定删除吗？',}).then(() => {
-            instance.close();
-            // axios------
-          },() =>{});
+          Dialog.confirm({ message: '确定删除吗？', beforeClose: (action, done) => {
+            let params = JSON.parse(name)
+            deleteTodo(params)
+              .then(res => {
+                self.getData()
+                done()
+                Toast('删除成功！')
+              }, err => {
+                Toast('删除失败！')
+                this.getData()
+              })
+          }})
           break;
       }
     },
+    
   },
 }
 </script>
