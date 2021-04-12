@@ -14,6 +14,7 @@ let timer
 
 // 请求拦截
 request.interceptors.request.use(function (config) {
+  clearTimeout(timer)
   timer = setTimeout(() => { Toast.loading({message: '',duration: 15000}) }, 3000)
   return config;
 }, function (error) {

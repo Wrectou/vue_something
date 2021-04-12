@@ -1,17 +1,27 @@
-import TodoList from '@/pages/TodoList.vue'
+import ShowRouters from '@/pages/ShowRouters.vue'
 
 export const routes = [
   {
+    path: '/showRouters',
+    name: 'show-routers',
+    component: ShowRouters
+  },
+  {
     path: '/todoList',
     name: 'todo-list',
-    component: TodoList
+    component: () => import('@/pages/TodoList/index.vue')
+  },
+  {
+    path: '/addTodo',
+    name: 'add-todo',
+    component: () => import('@/pages/TodoList/AddTodo.vue')
   },{
     path: '/about',
     name: 'about',
-    component: () => {return import('@/pages/About.vue')}
+    component: () => import('@/pages/About.vue')
   },
   {
     path: '*',
-    redirect: '/todolist'
+    redirect: '/showRouters'
   }
 ]

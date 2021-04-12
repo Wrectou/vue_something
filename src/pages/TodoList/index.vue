@@ -1,11 +1,14 @@
 <template>
   <div class="todo-list-box">
-    <h3 class="title">Todos</h3>
+    <h3 class="title">
+      Todos
+      <van-icon class="add" name="add-o" color="#1989fa" size="20" @click="addTodo" />
+    </h3>
 
     <div class="todo-list">
       <van-skeleton :loading="isLoading" :row="6" />
       <van-swipe-cell v-for="(todo, i) in resetTodosArr" :name="JSON.stringify(todo)" :key="todo.id" :before-close="beforeClose">
-        <van-cell :class="[todo.done ? 'done-todo' : '']" :border="false" :value="TimeUtil.formatTime(Number(todo.time))" >
+        <van-cell :class="[todo.done ? 'done-todo' : '']" :border="false" :value="todo.done ? todo.donetime ? TimeUtil.formatTime(Number(todo.donetime)) : '' : TimeUtil.formatTime(Number(todo.time))" >
           <template #title>
             <van-checkbox v-model="todo.done" icon-size="16px" @click="checkTodo(todo)">{{todo.todo}}</van-checkbox> 
           </template>
@@ -27,7 +30,7 @@
 
 <script>
 import { getTodoList, editTodo, deleteTodo } from '@/api'
-import { Tabbar, TabbarItem,   SwipeCell, Cell, Button, Dialog, Checkbox, Empty, Skeleton, Toast } from 'vant'
+import { Tabbar, TabbarItem,   SwipeCell, Cell, Button, Dialog, Checkbox, Empty, Skeleton, Toast,  Icon } from 'vant'
 import { TimeUtil } from '@/utils'
 
 export default {
@@ -42,6 +45,8 @@ export default {
     [Checkbox.name]: Checkbox,
     [Empty.name]: Empty,
     [Skeleton.name]: Skeleton,
+    [Toast.name]: Toast,
+    [Icon.name]: Icon,
   },
   data() {
     return {
@@ -102,6 +107,10 @@ export default {
         }
       },() => this.isLoading = false)
     },
+    // 跳转添加Todo新页面
+    addTodo() {
+      this.$router.push('./AddTodo')
+    },
     // 改变todo状态
     checkTodo(item) {
       let params
@@ -129,9 +138,12 @@ export default {
             let params = JSON.parse(name)
             deleteTodo(params)
               .then(res => {
-                self.getData()
+                let paramsIndex = this.todos.findIndex((item) => item.dataBaseId === params.dataBaseId)
+                this.todos.splice(paramsIndex, 1)
+                this.todayTodos = this.todos.filter((item) => this.TimeUtil.isToday(item.time))
                 done()
                 Toast('删除成功！')
+                self.getData()
               }, err => {
                 Toast('删除失败！')
                 this.getData()
@@ -151,8 +163,15 @@ export default {
   width: 100vw;
   min-height: 50vh;
   .title{
+    position: relative;
     margin: 8px 0;
-    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    .add{
+      position: absolute;
+      right: 0;
+    }
   }
   .todo-list{
     margin: 14px 0 0;

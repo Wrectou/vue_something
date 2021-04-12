@@ -26,3 +26,11 @@ export const deleteRequest = (url, params) => {
       .catch(err => reject(err))
   })
 }
+
+export const postRequest = (url, data) => {
+  return new Promise((resolve, reject) => {
+    request.post(url, data)
+      .then(res => resolve(res))
+      .catch(err => reject(err))
+  })
+}

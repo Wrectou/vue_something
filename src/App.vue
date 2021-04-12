@@ -3,33 +3,17 @@
     <transition :name="transitionName">
       <router-view class="router-view"></router-view>
     </transition>
-    <!-- <div class="router-box">
-      <van-button type="primary" size="mini" v-for="item in routerList" :key="item.name" @click="goRouter(item)">{{item.name}}</van-button>
-    </div> -->
   </div>
 </template>
 
 <script>
-import { Button } from 'vant'
-import {  setSessionStorage, getSessionStorage } from '@/utils'
+import { setSessionStorage, getSessionStorage } from '@/utils'
 
 export default {
   name: 'App',
-  components: {
-    [Button.name]: Button
-  },
   data() {
     return {
       transitionName: 'left-router',
-      routerList: [
-        {name: 'TodoList', link: '/TodoList'},
-        {name: 'About', link: '/About'},
-      ]
-    }
-  },
-  methods: {
-    goRouter(item) {
-      this.$router.push(item.link)
     }
   },
   watch: {
@@ -53,7 +37,7 @@ export default {
 }
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 #app {
   width: 100%;
   height: 100%;
@@ -74,7 +58,7 @@ export default {
   top: 0;
   width: 100%;
   height: 100%;
-  transition: all .5s cubic-bezier(1.0, 0.5, 0.8, 1.0);
+  transition: all .3s ease-in-out;
 }
 
 .left-router-enter, .right-router-leave-active{
