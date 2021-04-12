@@ -7,7 +7,11 @@
     />
     <div class="add-todo">
       <van-cell-group class="todo-box">
-        <van-field v-model="todoObj.todo" label="Todo" placeholder="Please Input Todo Name" />
+        <van-field 
+          v-model="todoObj.todo" 
+          label="Todo" 
+          placeholder="Please Input Todo Name" 
+        />
         <van-field
           readonly
           clickable
@@ -85,18 +89,17 @@ export default {
         Toast('todo time required')
       } else {
         this.isLoading = true
-        this.todoObj.id = nanoid()
-        addTodo(this.todoObj)
+        addTodo({...this.todoObj, id: nanoid()})
           .then(res => {
-            Toast('add success')
             this.isLoading = false
+            Toast('add success')
             this.todoObj.todo = ''
             this.showTime = ''
             this.todoObj.time = ''
             setTimeout(() => { this.$router.go(-1) }, 500)
           }, err => {
-            Toast('add error')
             this.isLoading = false
+            Toast('add error')
           })
       }
     },

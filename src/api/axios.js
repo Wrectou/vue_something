@@ -16,16 +16,16 @@ let timer
 request.interceptors.request.use(function (config) {
   clearTimeout(timer)
   timer = setTimeout(() => { Toast.loading({message: '',duration: 15000}) }, 3000)
-  return config;
+  return config
 }, function (error) {
-  return Promise.reject(error);
+  return Promise.reject(error)
 });
 
 // 响应拦截
 request.interceptors.response.use(function (response) {
   Toast.clear()
   clearTimeout(timer)
-  return response;
+  return response
 }, function (error) {
   Toast.clear()
   clearTimeout(timer)
@@ -34,22 +34,22 @@ request.interceptors.response.use(function (response) {
   if (error) {
     switch (errCode) {
       case 400:
-        error.message = '错误请求';
+        error.message = '错误请求'
         break;
       case 401:
-        error.message = '未授权，请重新登录';
+        error.message = '未授权，请重新登录'
         break;
       case 403:
-        error.message = '拒绝访问';
+        error.message = '拒绝访问'
         break;
       case 404:
-        error.message = '请求错误,未找到该资源';
+        error.message = '请求错误,未找到该资源'
         break;
       case 405:
-        error.message = '请求方法未允许';
+        error.message = '请求方法未允许'
         break;
       case 500:
-        error.message = '服务器端出错';
+        error.message = '服务器端出错'
         break;
       default:
         error.message = '连接失败' 
@@ -58,7 +58,7 @@ request.interceptors.response.use(function (response) {
     err.message = "连接到服务器失败"
   }
   Toast(`请求出错：${error.message}`)
-  return Promise.reject(error);
+  return Promise.reject(error)
 });
 
 export default request

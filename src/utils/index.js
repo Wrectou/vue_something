@@ -32,7 +32,7 @@ export class TimeUtil {
     const year = today.getFullYear()
     const month = today.getMonth()+1 < 10 ? '0'+(today.getMonth()+1) : today.getMonth()+1
     const day = today.getDate() < 10 ? '0'+today.getDate() : today.getDate()
-    return year+'-'+month+'-'+day
+    return year+'/'+month+'/'+day
   }
 
   /**
@@ -79,8 +79,8 @@ export class TimeUtil {
     const timeStamp = Number(time)
     const today = new Date()
     const year = today.getFullYear()
-    const yearStartStr = year + '-01-01 00:00:00'
-    const yearEndStr = year + '-12-31 23:59:59'
+    const yearStartStr = year + '/01/01 00:00:00'
+    const yearEndStr = year + '/12/31 23:59:59'
     const startTimeStamp = new Date(yearStartStr).getTime()
     const endTimeStamp = new Date(yearEndStr).getTime()
     if (timeStamp >= startTimeStamp && timeStamp <= endTimeStamp) return true

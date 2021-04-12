@@ -1,9 +1,6 @@
 <template>
   <div class="todo-list-box">
-    <h3 class="title">
-      Todos
-      <van-icon class="add" name="add-o" color="#1989fa" size="20" @click="addTodo" />
-    </h3>
+    <Header @childAddTodo="addTodo"/>
 
     <div class="todo-list">
       <van-skeleton :loading="isLoading" :row="6" />
@@ -29,6 +26,7 @@
 </template>
 
 <script>
+import Header from '@/components/TodoList/Header.vue'
 import { getTodoList, editTodo, deleteTodo } from '@/api'
 import { Tabbar, TabbarItem,   SwipeCell, Cell, Button, Dialog, Checkbox, Empty, Skeleton, Toast,  Icon } from 'vant'
 import { TimeUtil } from '@/utils'
@@ -36,6 +34,7 @@ import { TimeUtil } from '@/utils'
 export default {
   name: 'todo-list',
   components: {
+    Header,
     [Tabbar.name]: Tabbar,
     [TabbarItem.name]: TabbarItem,
     [SwipeCell.name]: SwipeCell,
@@ -108,7 +107,8 @@ export default {
       },() => this.isLoading = false)
     },
     // 跳转添加Todo新页面
-    addTodo() {
+    addTodo(childEmitValue) {
+      console.log('子组件调用后的传值：',childEmitValue);
       this.$router.push('./AddTodo')
     },
     // 改变todo状态
@@ -135,19 +135,23 @@ export default {
           break;
         case 'right':
           Dialog.confirm({ message: '确定删除吗？', beforeClose: (action, done) => {
-            let params = JSON.parse(name)
-            deleteTodo(params)
-              .then(res => {
-                let paramsIndex = this.todos.findIndex((item) => item.dataBaseId === params.dataBaseId)
-                this.todos.splice(paramsIndex, 1)
-                this.todayTodos = this.todos.filter((item) => this.TimeUtil.isToday(item.time))
-                done()
-                Toast('删除成功！')
-                self.getData()
-              }, err => {
-                Toast('删除失败！')
-                this.getData()
-              })
+            if (action === 'confirm') {
+              let params = JSON.parse(name)
+              deleteTodo(params)
+                .then(res => {
+                  let paramsIndex = this.todos.findIndex((item) => item.dataBaseId === params.dataBaseId)
+                  this.todos.splice(paramsIndex, 1)
+                  this.todayTodos = this.todos.filter((item) => this.TimeUtil.isToday(item.time))
+                  done()
+                  Toast('删除成功！')
+                  self.getData()
+                }, err => {
+                  Toast('删除失败！')
+                  this.getData()
+                })
+            } else {
+              done()
+            }
           }})
           break;
       }
@@ -162,19 +166,8 @@ export default {
   padding: 8px;
   width: 100vw;
   min-height: 50vh;
-  .title{
-    position: relative;
-    margin: 8px 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    .add{
-      position: absolute;
-      right: 0;
-    }
-  }
   .todo-list{
-    margin: 14px 0 0;
+    margin: 18px 0 0;
     .van-swipe-cell{
       margin: 8px 0 0;
       .van-cell{
