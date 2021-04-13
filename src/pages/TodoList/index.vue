@@ -11,7 +11,8 @@
           </template>
         </van-cell>
         <template #right>
-          <van-button square type="danger" text="删除" />
+          <van-button square type="info" text="编辑" @click="isEdit = true" />
+          <van-button square type="danger" text="删除" @click="isEdit = false" />
         </template>
       </van-swipe-cell>
       <van-empty v-if="activeTabbar === 0 && todayTodos.length<1 && !isLoading || activeTabbar === 1 && todos.length<1 && !isLoading" description="No-Todo" />
@@ -55,6 +56,7 @@ export default {
       checked: false,
       todos: [],
       todayTodos: [],
+      isEdit: false,
     }
   },
   created() {
@@ -134,25 +136,28 @@ export default {
           instance.close();
           break;
         case 'right':
-          Dialog.confirm({ message: '确定删除吗？', beforeClose: (action, done) => {
-            if (action === 'confirm') {
-              let params = JSON.parse(name)
-              deleteTodo(params)
-                .then(res => {
-                  let paramsIndex = this.todos.findIndex((item) => item.dataBaseId === params.dataBaseId)
-                  this.todos.splice(paramsIndex, 1)
-                  this.todayTodos = this.todos.filter((item) => this.TimeUtil.isToday(item.time))
-                  done()
-                  Toast('删除成功！')
-                  self.getData()
-                }, err => {
-                  Toast('删除失败！')
-                  this.getData()
-                })
-            } else {
-              done()
-            }
-          }})
+          if (this.isEdit) this.$router.push({path:'/AddTodo', query:{dataBaseId: JSON.parse(name).dataBaseId}})
+          else {
+            Dialog.confirm({ message: '确定删除吗？', beforeClose: (action, done) => {
+              if (action === 'confirm') {
+                let params = JSON.parse(name)
+                deleteTodo(params)
+                  .then(res => {
+                    let paramsIndex = this.todos.findIndex((item) => item.dataBaseId === params.dataBaseId)
+                    this.todos.splice(paramsIndex, 1)
+                    this.todayTodos = this.todos.filter((item) => this.TimeUtil.isToday(item.time))
+                    done()
+                    Toast('删除成功！')
+                    self.getData()
+                  }, err => {
+                    Toast('删除失败！')
+                    this.getData()
+                  })
+              } else {
+                done()
+              }
+            }})
+          }
           break;
       }
     },

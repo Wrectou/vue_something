@@ -3,6 +3,9 @@ import { getRequest, putRequest, deleteRequest, postRequest } from '@/api/type'
 // 获取所有todos
 export const getTodoList = () =>  getRequest('/lists.json')
 
+// 获取单条todo
+export const getTodo = (params) => getRequest(`/lists/${params.dataBaseId}.json`)
+
 // 编辑单条todo
 export const editTodo = (params) => putRequest(`/lists/${params.dataBaseId}.json`, params)
 

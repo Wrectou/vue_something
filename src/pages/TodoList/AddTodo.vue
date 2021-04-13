@@ -34,13 +34,13 @@
           />
         </van-popup>
       </van-cell-group>
-      <van-button class="button" plain block :loading="isLoading" type="info" loading-text="Loading..." @click="handleAddTodo">Add</van-button>
+      <van-button class="button" plain block :loading="isLoading" type="info" loading-text="Loading..." @click="handleButton">{{buttonText}}</van-button>
     </div>
   </div>
 </template>
 
 <script>
-import { addTodo } from '@/api'
+import { getTodo, addTodo, editTodo } from '@/api'
 import { NavBar, CellGroup, Field, Button, DatetimePicker, Popup, Toast, } from 'vant'
 import { TimeUtil } from '@/utils'
 import { nanoid } from 'nanoid'
@@ -72,17 +72,45 @@ export default {
         todo: ''
       },
       isLoading: false,
+      buttonText: 'Add',
+      dataBaseId: '',
+    }
+  },
+  created() {
+    if (this.$route.query.dataBaseId) {
+      const {dataBaseId} = this.$route.query
+      this.dataBaseId = dataBaseId
+      this.getTodoInfo()
+      this.buttonText = 'Edit'
     }
   },
   methods: {
+    // 获取单条信息
+    getTodoInfo() {
+      getTodo({dataBaseId: this.dataBaseId})
+        .then(res => {
+          const {data} = res
+          this.todoObj = data
+          this.showTime = this.TimeUtil.formatTime(data.time)
+          this.currentDate = new Date(Number(data.time))
+        })
+    },
     // 时间选择器
     onConfirm(time) {
       this.showTime = this.TimeUtil.formatTime(time)
       this.todoObj.time = new Date(time).getTime()
       this.showPicker = false
     },
-    // 添加todo按钮
-    handleAddTodo() {
+    // button按钮
+    handleButton() {
+      if (this.dataBaseId) {
+        this.handleEdit()
+      } else {
+        this.handleAdd()
+      }
+    },
+    // 添加todo
+    handleAdd() {
       if (this.todoObj.todo == '') {
         Toast('todo name required')
       } else if (this.todoObj.time == '') {
@@ -96,13 +124,26 @@ export default {
             this.todoObj.todo = ''
             this.showTime = ''
             this.todoObj.time = ''
-            setTimeout(() => { this.$router.go(-1) }, 500)
+            setTimeout(() => { this.$router.go(-1) }, 300)
           }, err => {
             this.isLoading = false
             Toast('add error')
           })
       }
     },
+    // 编辑todo
+    handleEdit() {
+      this.isLoading = true
+      editTodo({...this.todoObj, dataBaseId: this.dataBaseId})
+        .then(res => {
+          this.isLoading = false
+          Toast('edit success')
+          this.$router.go(-1)
+        }, err => {
+          this.isLoading = false
+          Toast('edit error')
+        })
+    }
   },
 }
 </script>
