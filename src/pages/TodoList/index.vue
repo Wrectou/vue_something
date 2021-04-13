@@ -15,7 +15,9 @@
           <van-button square type="danger" text="删除" @click="isEdit = false" />
         </template>
       </van-swipe-cell>
-      <van-empty v-if="activeTabbar === 0 && todayTodos.length<1 && !isLoading || activeTabbar === 1 && todos.length<1 && !isLoading" description="No-Todo" />
+      <van-empty v-if="activeTabbar === 0 && todayTodos.length<1 && !isLoading || activeTabbar === 1 && todos.length<1 && !isLoading" description="No-Todo">
+        <van-button size="mini" color="#1989fa" @click="addTodo">Add</van-button>
+      </van-empty>
     </div>
 
     <van-tabbar v-model="activeTabbar">
@@ -110,7 +112,7 @@ export default {
     },
     // 跳转添加Todo新页面
     addTodo(childEmitValue) {
-      console.log('子组件调用后的传值：',childEmitValue);
+      // console.log('子组件调用后的传值：',childEmitValue);
       this.$router.push('./AddTodo')
     },
     // 改变todo状态
@@ -192,7 +194,7 @@ export default {
       padding: 0;
     }
     .van-empty{
-      margin: 22vh 0 0;
+      margin: 18vh 0 0;
     }
   }
 }
