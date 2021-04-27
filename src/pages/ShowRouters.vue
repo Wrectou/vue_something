@@ -18,7 +18,7 @@ export default {
     return {
       routerList: [
         {name: 'TodoList', link: '/TodoList'},
-        {name: 'About', link: '/About'},
+        {name: 'VuexDemo', link: '/vuexDemo'},
       ]
     }
   },

@@ -16,9 +16,9 @@ export const routes = [
     name: 'add-todo',
     component: () => import('@/pages/TodoList/AddTodo.vue')
   },{
-    path: '/about',
-    name: 'about',
-    component: () => import('@/pages/About.vue')
+    path: '/vuexDemo',
+    name: 'vuex-demo',
+    component: () => import('@/pages/VuexDemo.vue')
   },
   {
     path: '*',

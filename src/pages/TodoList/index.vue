@@ -1,7 +1,8 @@
 <template>
   <div class="todo-list-box">
     <Header @childAddTodo="addTodo"/>
-
+    <h4>count: {{count}}</h4>
+    <h4>getTodayTodo: {{getTodayTodo}}</h4>
     <div class="todo-list">
       <van-skeleton :loading="isLoading" :row="6" />
       <van-swipe-cell v-for="(todo, i) in resetTodosArr" :name="JSON.stringify(todo)" :key="todo.id" :before-close="beforeClose">
@@ -33,6 +34,7 @@ import Header from '@/components/TodoList/Header.vue'
 import { getTodoList, editTodo, deleteTodo } from '@/api'
 import { Tabbar, TabbarItem,   SwipeCell, Cell, Button, Dialog, Checkbox, Empty, Skeleton, Toast,  Icon } from 'vant'
 import { TimeUtil } from '@/utils'
+import { mapState, mapGetters } from 'vuex'
 
 export default {
   name: 'todo-list',
@@ -86,7 +88,12 @@ export default {
       nowArr.sort((a, b) => a.time - b.time)
       doneArr.sort((a, b) => a.donetime - b.donetime)
       return [...nowArr, ...doneArr]
-    }
+    },
+    ...mapState(['count']),
+    // getTodayTodo() {
+    //   return this.$store.getters.getTodayTodo
+    // },
+    ...mapGetters(['getTodayTodo'])
   },
   methods: {
     // 获取todos
