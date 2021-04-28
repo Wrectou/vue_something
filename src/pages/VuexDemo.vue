@@ -34,23 +34,23 @@ export default {
   },
   computed: {
     getVuexData() {
-      return this.$store.state.count
+      return this.$store.state.count.count
     },
     todos() {
-      return this.$store.state.todos
+      return this.$store.state.todo.todos
     }
   },
   methods: {
-    ...mapMutations(['decrement', 'decrementNum']),
+    ...mapMutations('count',['decrement', 'decrementNum']),
     increment() {
-      this.$store.commit('increment')
+      this.$store.commit('count/increment')
     },
     // incrementNum() {
     //   this.$store.commit('incrementNum', 10)
     // },
     incrementNum() {
       // this.$store.commit('incrementNum', {amount:10})
-      this.$store.commit({type: 'incrementNum', amount: 10})
+      this.$store.commit({type: 'count/incrementNum', amount: 10})
     },
     // decrement() {
     //   this.$store.commit('decrement')
@@ -58,9 +58,12 @@ export default {
     // decrementNum() {
     //   this.$store.commit('decrementNum', 10)
     // },
-    ...mapActions(['getTodos']),
-    getTodo() {
-      this.$store.dispatch('getTodos')
+    // ...mapActions(['getTodos']),
+    // getTodo() {
+    //   this.$store.dispatch('getTodos')
+    // },
+    getTodos() {
+      this.$store.dispatch('todo/getTodos')
     },
   },
 }

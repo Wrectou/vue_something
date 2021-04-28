@@ -89,11 +89,11 @@ export default {
       doneArr.sort((a, b) => a.donetime - b.donetime)
       return [...nowArr, ...doneArr]
     },
-    ...mapState(['count']),
-    // getTodayTodo() {
-    //   return this.$store.getters.getTodayTodo
-    // },
-    ...mapGetters(['getTodayTodo'])
+    ...mapState('count',['count']),
+    getTodayTodo() {
+      return this.$store.getters['todo/getTodayTodo']
+    },
+    // ...mapGetters('todo',['getTodayTodo'])
   },
   methods: {
     // 获取todos
