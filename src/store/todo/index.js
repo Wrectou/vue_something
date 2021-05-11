@@ -1,33 +1,37 @@
-import { TimeUtil } from '@/utils'
-import { getTodoList } from '@/api'
 
-const timeUtil = new TimeUtil()
+import { getTodoList } from '@/api'
+import { TimeUtil } from '@/utils'
+
+let timeUtil = new TimeUtil()
 
 const state = {
-  todos: [],
+  todoList: [],
 }
 
 const getters = {
-  getTodayTodo: state => {
-    return state.todos.filter(item => timeUtil.isToday(item.time))
+  getTodayTodoList: state => {
+    return state.todoList.filter(item => timeUtil.isToday(item.time))
   }
 }
 
 const mutations = {
   updateTodoList: (state, payload) => {
-    state.todos = payload.todos
-  }
+    state.todoList = payload.todos
+  },
 }
 
 const actions = {
-  getTodos: async context => {
-    const {data} = await getTodoList()
-    let todos = []
-    for (let [key, value] of Object.entries(data)) {
-      value.paramsId = key
-      todos.push(value)
-    }
-    context.commit({type: 'updateTodoList', todos})
+  getTodoList(context) {
+    getTodoList()
+      .then(res => {
+        const {data} = res
+        let todos = []
+        for(let [key, value] of Object.entries(data)) {
+          value.paramsId = key
+          todos.push(value)
+        }
+        context.commit({type: 'updateTodoList', todos})
+      })
   },
 }
 

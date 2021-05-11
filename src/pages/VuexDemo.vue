@@ -1,26 +1,35 @@
 <template>
   <div class="about-box">
     <h3>vuexDemo</h3>
-    count: {{getVuexData}}
+    count: {{count}}
     <br/>
-    <van-button type="primary" @click="increment">+</van-button>
-    <van-button type="primary" @click="incrementNum">+10</van-button>
-    <van-button type="primary" @click="decrement">-</van-button>
-    <van-button type="primary" @click="decrementNum(10)">-10</van-button>
+    <van-button type="primary" @click="increment">+</van-button>&emsp;
+    <van-button type="primary" @click="incrementNum">+10</van-button>&emsp;
+    <van-button type="primary" @click="decrement">-</van-button>&emsp;
+    <van-button type="primary" @click="decrementNum(10)">-10</van-button>&emsp;
     <br/>
     <br/>
     <div class="todos">
-      <p v-for="item in todos" :key=item.paramsId>{{item.todo}}<br/><br/></p>
+      <h4>todoList:</h4>
+      <br/>
+      <p v-for="item in todoList" :key=item.paramsId>{{item.todo}}<br/><br/></p>
+    </div>
+    <div class="todos">
+      <h4>getTodayTodoList:</h4>
+      <br/>
+      <p v-for="item in getTodayTodoList" :key=item.paramsId>{{item.todo}}<br/><br/></p>
     </div>
     <br/>
-    <!-- <van-button type="primary" @click="getTodo">getTodo</van-button> -->
+    <br/>
+    <br/>
     <van-button type="primary" @click="getTodos">getTodos</van-button>
   </div>
 </template>
 
 <script>
 import { Button } from 'vant'
-import { mapMutations, mapActions } from 'vuex'
+import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
+import { INCREMENT, DECREMENT, INCREMENTNUM, DECREMENTNUM } from '@/store/mutation-types'
 
 export default {
   name: 'vuex-demo',
@@ -33,38 +42,31 @@ export default {
     [Button.name]: Button
   },
   computed: {
-    getVuexData() {
-      return this.$store.state.count.count
-    },
-    todos() {
-      return this.$store.state.todo.todos
-    }
+    ...mapState('count',['count']),
+    ...mapState('todo',['todoList']),
+    // count() {
+    //   return this.$store.state.count.count
+    // },
+    // todoList() {
+    //   return this.$store.state.todo.todoList
+    // },
+    ...mapGetters('todo',['getTodayTodoList']),
+    // getTodayTodoList() {
+    //   return this.$store.getters['todo/getTodayTodoList']
+    // }
   },
   methods: {
-    ...mapMutations('count',['decrement', 'decrementNum']),
-    increment() {
-      this.$store.commit('count/increment')
-    },
-    // incrementNum() {
-    //   this.$store.commit('incrementNum', 10)
-    // },
+    ...mapMutations('count',{'increment': INCREMENT, 'decrement': DECREMENT }),
     incrementNum() {
-      // this.$store.commit('incrementNum', {amount:10})
-      this.$store.commit({type: 'count/incrementNum', amount: 10})
+      this.$store.commit(`count/${INCREMENTNUM}`, 10)
     },
-    // decrement() {
-    //   this.$store.commit('decrement')
-    // },
-    // decrementNum() {
-    //   this.$store.commit('decrementNum', 10)
-    // },
-    // ...mapActions(['getTodos']),
-    // getTodo() {
-    //   this.$store.dispatch('getTodos')
-    // },
-    getTodos() {
-      this.$store.dispatch('todo/getTodos')
+    decrementNum(num) {
+      this.$store.commit({type:`count/${DECREMENTNUM}`, amount: num})
     },
+    ...mapActions('todo',{getTodos: 'getTodoList'}),
+    // getTodos() {
+    //   this.$store.dispatch('todo/getTodoList')
+    // },
   },
 }
 </script>

@@ -1,8 +1,8 @@
 <template>
   <div class="todo-list-box">
     <Header @childAddTodo="addTodo"/>
-    <h4>count: {{count}}</h4>
-    <h4>getTodayTodo: {{getTodayTodo}}</h4>
+    <!-- <h4>count: {{count}}</h4>
+    <h4>getTodayTodo: {{getTodayTodo}}</h4> -->
     <div class="todo-list">
       <van-skeleton :loading="isLoading" :row="6" />
       <van-swipe-cell v-for="(todo, i) in resetTodosArr" :name="JSON.stringify(todo)" :key="todo.id" :before-close="beforeClose">
@@ -91,9 +91,8 @@ export default {
     },
     ...mapState('count',['count']),
     getTodayTodo() {
-      return this.$store.getters['todo/getTodayTodo']
+      return this.$store.getters['todo/getTodayTodoList']
     },
-    // ...mapGetters('todo',['getTodayTodo'])
   },
   methods: {
     // 获取todos

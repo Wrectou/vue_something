@@ -1,23 +1,22 @@
+import { INCREMENT, DECREMENT, INCREMENTNUM, DECREMENTNUM } from '@/store/mutation-types'
+
 export const count = {
   namespaced: true,
   state: {
-    count: 0,
+    count: 999
   },
   mutations: {
-    increment: state => {
+    [INCREMENT](state) {
       state.count ++
     },
-    // incrementNum: (state, payload) => {
-    //   state.count += payload
-    // },
-    incrementNum: (state, payload) => {
-      state.count += payload.amount
-    },
-    decrement(state) {
+    [DECREMENT]: state => {
       state.count --
     },
-    decrementNum: (state, payload) => {
-      state.count -= payload
+    [INCREMENTNUM](state, payload) {
+      state.count += payload
+    },
+    [DECREMENTNUM](state, payload) {
+      state.count -= payload.amount
     },
   },
 }
