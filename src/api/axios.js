@@ -3,7 +3,8 @@ import { Toast } from 'vant'
 
 // axios实例
 const request = axios.create({
-  baseURL: 'https://todo-add9b-default-rtdb.firebaseio.com',
+  baseURL: process.env.VUE_APP_API,
+  // baseURL: 'https://todo-add9b-default-rtdb.firebaseio.com',
   // baseURL: 'https://t9b-default-rtdb.firebaseio.com',
   // baseURL: 'https://my-blog-3a640.firebaseio.com',
   timeout: 10 * 1000,
