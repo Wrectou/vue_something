@@ -19,6 +19,7 @@ export default {
       routerList: [
         {name: 'TodoList', link: '/TodoList'},
         {name: 'VuexDemo', link: '/vuexDemo'},
+        {name: 'Lottie', link: '/lottie'},
       ]
     }
   },

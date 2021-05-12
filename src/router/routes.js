@@ -19,6 +19,10 @@ export const routes = [
     path: '/vuexDemo',
     name: 'vuex-demo',
     component: () => import('@/pages/VuexDemo.vue')
+  },{
+    path: '/lottie',
+    name: 'lottie',
+    component: () => import('@/pages/Lottie.vue')
   },
   {
     path: '*',
