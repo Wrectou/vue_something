@@ -1,4 +1,4 @@
-import ShowRouters from '@/pages/ShowRouters.vue'
+import ShowRouters from '@/pages/ShowRouters/index.vue'
 
 export const routes = [
   {
@@ -18,11 +18,15 @@ export const routes = [
   },{
     path: '/vuexDemo',
     name: 'vuex-demo',
-    component: () => import('@/pages/VuexDemo.vue')
+    component: () => import('@/pages/VuexDemo/index.vue')
   },{
     path: '/lottie',
     name: 'lottie',
-    component: () => import('@/pages/Lottie.vue')
+    component: () => import('@/pages/Lottie/index.vue')
+  },{
+    path: '/cacelAxios',
+    name: 'cacel-axios',
+    component: () => import('@/pages/cancelAxios/index.vue')
   },
   {
     path: '*',

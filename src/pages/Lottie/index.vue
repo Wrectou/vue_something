@@ -12,6 +12,7 @@
 
 <script>
 import * as animationData from '@/assets/lottie.json'
+import * as iconanimationData from '@/assets/icon.json'
 import Lottie from 'vue-lottie/src/lottie.vue'
 
 export default {
@@ -19,7 +20,7 @@ export default {
   data() {
     return {
       defaultOptions: {
-        animationData: animationData
+        animationData: iconanimationData
       },
       animationSpeed: 1,
       anim: {}, // 这里可以看到 lottie 对象的全部属性
@@ -31,7 +32,6 @@ export default {
   methods: {
     handleAnimation: function(anim) {
       this.anim = anim
-      console.log(anim) 
     },
     stop: function () {
       this.anim.stop()

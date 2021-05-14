@@ -1,6 +1,9 @@
 import axios from 'axios'
 import { Toast } from 'vant'
 
+// 全局定义一个存放取消请求的标识
+window.axiosCancel = []
+
 // axios实例
 const request = axios.create({
   baseURL: process.env.VUE_APP_API,
@@ -17,6 +20,8 @@ let timer
 request.interceptors.request.use(function (config) {
   clearTimeout(timer)
   timer = setTimeout(() => { Toast.loading({message: '',duration: 15000}) }, 3000)
+  // 添加需要取消的请求标记
+  config.cancelToken = new axios.CancelToken(cancel => window.axiosCancel.push({cancel}))
   return config
 }, function (error) {
   return Promise.reject(error)
@@ -32,7 +37,9 @@ request.interceptors.response.use(function (response) {
   clearTimeout(timer)
   let errStr = error.toString()
   let errCode = Number(errStr.substring(errStr.length-3))
-  if (error) {
+  // 由于主动取消请求的状态status和请求失败一样是 (canceled) ，所以要对此做特殊判断
+  if (error.message === '主动取消请求') return {}
+  else if (error) {
     switch (errCode) {
       case 400:
         error.message = '错误请求'

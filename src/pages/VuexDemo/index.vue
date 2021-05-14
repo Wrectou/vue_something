@@ -58,7 +58,6 @@ export default {
   methods: {
     ...mapMutations('count',{'increment': INCREMENT, 'decrement': DECREMENT }),
     incrementNum() {
-      console.log('incrementNum');
       this.$store.commit(`count/${INCREMENTNUM}`, 10)
     },
     decrementNum(num) {

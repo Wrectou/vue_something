@@ -20,6 +20,7 @@ export default {
         {name: 'TodoList', link: '/TodoList'},
         {name: 'VuexDemo', link: '/vuexDemo'},
         {name: 'Lottie', link: '/lottie'},
+        {name: 'cacelAxios', link: '/cacelAxios'},
       ]
     }
   },
