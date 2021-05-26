@@ -1,7 +1,7 @@
 <template>
   <div class="Lottie-box">
     <h3>Lottie</h3>
-    <Lottie :options="defaultOptions" :height="260" :width="260" @animCreated="handleAnimation" />
+    <Lottie :options="defaultOptions" :height="260" :width="340" @animCreated="handleAnimation" />
     <div class="button-box">
       <button @click="play">play</button>
       <button @click="pause">pause</button>
@@ -35,13 +35,14 @@ import * as animationData from '@/assets/lottie.json'   // 正方形转圈段
 import * as iconanimationData from '@/assets/icon.json'   // 图标动画
 import * as indexIcon from '@/assets/01.json'   // indexIcon
 import * as meIcon from '@/assets/04.json'   // meIcon
+import * as bannerIcon from '@/assets/banner.json'   // banner
 
 export default {
   name: 'lottie',
   data() {
     return {
       defaultOptions: {
-        animationData: animationData
+        animationData: bannerIcon
       },
       anim: {}, // 这里可以看到 lottie 对象的全部属性
       // tabbar
